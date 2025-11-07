@@ -14,11 +14,15 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Use Eclipse Temurin JRE for runtime
+# Runtime stage
 FROM eclipse-temurin:21-jre-alpine
 
-# Set working directory
 WORKDIR /app
+
+# Install additional packages needed for native libraries
+RUN apk add --no-cache \
+    libc6-compat \
+    libstdc++
 
 # Copy the jar from build stage
 COPY --from=build /app/target/*.jar app.jar
@@ -33,5 +37,5 @@ EXPOSE 10000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:${PORT:-10000}/actuator/health || exit 1
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application with JVM options to avoid native library issues
+ENTRYPOINT ["java", "-Dio.netty.native.workdir=/tmp", "-jar", "app.jar"]
