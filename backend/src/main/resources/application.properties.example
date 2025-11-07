@@ -1,0 +1,43 @@
+spring.application.name=backend
+
+# ==========================================
+# Firebase Configuration
+# ==========================================
+# Points to the service account key in the classpath (src/main/resources)
+# IMPORTANT: Never commit the actual firebase-service-account-key.json file!
+# Download it from Firebase Console > Project Settings > Service Accounts
+app.firebase-config-file=classpath:firebase-service-account-key.json
+
+# ==========================================
+# AWS S3 Configuration
+# ==========================================
+# SECURITY: Replace these with your actual AWS credentials
+# NEVER commit this file with real values!
+# Consider using environment variables or AWS IAM roles instead
+
+# AWS Access Key ID (IAM user credentials)
+spring.cloud.aws.credentials.access-key=YOUR_AWS_ACCESS_KEY_HERE
+
+# AWS Secret Access Key (IAM user credentials)
+spring.cloud.aws.credentials.secret-key=YOUR_AWS_SECRET_KEY_HERE
+
+# The AWS region where your S3 bucket is located
+spring.cloud.aws.region.static=ap-south-1
+
+# Your specific S3 bucket name
+app.aws.s3.bucket-name=your-bucket-name-here
+
+# ==========================================
+# PRODUCTION SETUP RECOMMENDATIONS:
+# ==========================================
+# 1. Use environment variables instead of hardcoded values:
+#    spring.cloud.aws.credentials.access-key=${AWS_ACCESS_KEY}
+#    spring.cloud.aws.credentials.secret-key=${AWS_SECRET_KEY}
+#
+# 2. Or use AWS IAM roles (recommended for EC2/ECS/Lambda):
+#    spring.cloud.aws.credentials.instance-profile=true
+#
+# 3. Create a copy of this file named 'application.properties' 
+#    and replace the placeholder values with your actual credentials
+#
+# 4. NEVER commit application.properties with real values!

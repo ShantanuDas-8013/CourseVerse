@@ -1,0 +1,55 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# ==========================================
+# SECURITY: Sensitive Files - Never Commit
+# ==========================================
+
+# Firebase service account key (CRITICAL - Contains private keys)
+src/main/resources/firebase-service-account-key.json
+**/firebase-service-account-key.json
+
+# Application properties (Contains AWS credentials and secrets)
+src/main/resources/application.properties
+src/main/resources/application.yml
+src/main/resources/application.yaml
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# AWS Credentials
+**/.aws/credentials
+**/.aws/config
