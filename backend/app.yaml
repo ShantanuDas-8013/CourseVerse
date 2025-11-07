@@ -1,0 +1,33 @@
+runtime: java21
+env: standard
+instance_class: F2
+
+# Environment variables - Use Google Cloud Secret Manager in production
+env_variables:
+  SPRING_PROFILES_ACTIVE: "prod"
+  # AWS credentials should be stored in Secret Manager
+  # SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY: "from-secret-manager"
+  # SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY: "from-secret-manager"
+  SPRING_CLOUD_AWS_REGION_STATIC: "ap-south-1"
+  APP_AWS_S3_BUCKET_NAME: "courseverse-uploads"
+
+# Automatic scaling
+automatic_scaling:
+  min_instances: 1
+  max_instances: 10
+  target_cpu_utilization: 0.65
+  target_throughput_utilization: 0.65
+
+# Health check
+liveness_check:
+  path: "/actuator/health"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 2
+
+readiness_check:
+  path: "/actuator/health"
+  check_interval_sec: 5
+  timeout_sec: 4
+  failure_threshold: 2
+  app_start_timeout_sec: 300
