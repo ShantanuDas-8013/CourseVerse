@@ -15,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,9 @@ import java.util.List;
 public class WebSecurityConfig {
 
     private final FirebaseJwtFilter firebaseJwtFilter;
+    
+    @Value("${CORS_ALLOWED_ORIGINS:}")
+    private String corsAllowedOrigins;
 
     public WebSecurityConfig(FirebaseJwtFilter firebaseJwtFilter) {
         this.firebaseJwtFilter = firebaseJwtFilter;
@@ -39,9 +43,10 @@ public class WebSecurityConfig {
                 // We are using token-based auth, so sessions are stateless
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                .authorizeHttpRequests(authz -> authz
+        .authorizeHttpRequests(authz -> authz
                         // --- UPDATED RULES ---
                         .requestMatchers("/api/v1/courses/health").permitAll() // Old health check
+            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/courses").permitAll() // Browse
                                                                                                                  // courses
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/courses/**").permitAll() // Get
@@ -62,7 +67,15 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*")); // Allow all origins in development
+        // If specific origins are provided via environment variable, use them. Otherwise allow all origins (dev).
+        if (corsAllowedOrigins != null && !corsAllowedOrigins.isBlank()) {
+            List<String> origins = Arrays.stream(corsAllowedOrigins.split(","))
+                    .map(String::trim)
+                    .toList();
+            configuration.setAllowedOrigins(origins);
+        } else {
+            configuration.setAllowedOriginPatterns(List.of("*"));
+        }
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
