@@ -23,16 +23,11 @@ WORKDIR /app
 # Copy the jar from build stage
 COPY --from=build /app/target/*.jar app.jar
 
-# Copy application properties
-COPY --from=build /app/src/main/resources/application*.properties ./
-
 # Note: Render secret files will be mounted at /app/ root automatically
+# The firebase-service-account-key.json secret file will be at /app/firebase-service-account-key.json
 
 # Expose port (Render uses 10000 by default)
 EXPOSE 10000
-
-# Set environment to handle Firebase config from multiple locations
-ENV SPRING_CONFIG_LOCATION=file:/app/application.properties,file:/app/application-prod.properties
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
