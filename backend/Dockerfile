@@ -14,15 +14,10 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Runtime stage
-FROM eclipse-temurin:21-jre-alpine
+# Runtime stage - Use Debian-based image for better native library compatibility
+FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
-
-# Install additional packages needed for native libraries
-RUN apk add --no-cache \
-    libc6-compat \
-    libstdc++
 
 # Copy the jar from build stage
 COPY --from=build /app/target/*.jar app.jar
