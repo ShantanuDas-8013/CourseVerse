@@ -23,6 +23,7 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() {
         try {
+            System.out.println("Attempting to load Firebase config from: " + serviceAccountResource.getURL());
             InputStream serviceAccount = serviceAccountResource.getInputStream();
 
             FirebaseOptions options = FirebaseOptions.builder()
@@ -35,8 +36,9 @@ public class FirebaseConfig {
             }
         } catch (IOException e) {
             System.err.println("Error initializing Firebase: " + e.getMessage());
-            // In a real app, you might want to throw a runtime exception
-            // to stop the application from starting if Firebase is critical.
+            e.printStackTrace();
+            // Throw exception to prevent app from starting with broken Firebase
+            throw new RuntimeException("Failed to initialize Firebase. Please check firebase config file path.", e);
         }
     }
 
