@@ -34,12 +34,31 @@ class _CourseDetailScreenState extends ConsumerState<CourseDetailScreen> {
 
       // Refresh the 'myCoursesProvider' to update the UI
       ref.invalidate(myCoursesProvider);
+      // Also refresh the course detail to ensure consistency
+      ref.invalidate(courseDetailProvider(widget.courseId));
     } catch (e) {
-      // Show error snackbar
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-        );
+      // Handle the "already enrolled" case gracefully
+      final errorMessage = e.toString();
+      if (errorMessage.contains('already enrolled') || errorMessage.contains('409')) {
+        // User is already enrolled, just refresh the UI
+        ref.invalidate(myCoursesProvider);
+        ref.invalidate(courseDetailProvider(widget.courseId));
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You are already enrolled in this course!'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+      } else {
+        // Show other errors
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+          );
+        }
       }
     } finally {
       if (mounted) {
