@@ -26,9 +26,6 @@ COPY --from=build /app/target/*.jar app.jar
 # Copy application properties
 COPY --from=build /app/src/main/resources/application*.properties ./
 
-# Create directory for secrets
-RUN mkdir -p /etc/secrets
-
 # Expose port (Render uses 10000 by default)
 EXPOSE 10000
 
@@ -37,4 +34,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:${PORT:-10000}/actuator/health || exit 1
 
 # Run the application
+# Note: Secret files from Render will be available in /etc/secrets/
 ENTRYPOINT ["java", "-jar", "app.jar"]
